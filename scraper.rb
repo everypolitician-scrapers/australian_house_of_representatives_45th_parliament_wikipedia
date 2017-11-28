@@ -37,7 +37,7 @@ class MemberRow < Scraped::HTML
   field :party do
     # First remove footnote link if present
     tds[1].at(:sup)&.remove
-    tds[1].text
+    tds[1].text.tidy
   end
 
   field :party_wikidata do
