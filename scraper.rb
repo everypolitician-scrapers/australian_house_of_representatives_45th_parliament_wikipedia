@@ -15,13 +15,13 @@ class MembersPage < Scraped::HTML
   field :members do
     member_list.map do |m|
       mem = m.to_h
-      mem.to_h.merge(party_wikidata: parties[mem[:party]])
+      mem.to_h.merge(party_wikidata: parties_to_wikidata[mem[:party]])
     end
   end
 
   private
 
-  def parties
+  def parties_to_wikidata
     parties_with_wikidata = member_list.reject { |m| m.party_wikidata.empty? }
     parties_with_wikidata.map { |p| [p.party, p.party_wikidata] }.to_h
   end
