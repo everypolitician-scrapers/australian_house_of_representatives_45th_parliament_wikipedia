@@ -13,8 +13,14 @@ class MembersPage < Scraped::HTML
   decorator WikidataIdsDecorator::Links
 
   field :members do
-    table.xpath('.//tr[td]').map do |tr|
+    mems = table.xpath('.//tr[td]').map do |tr|
       fragment tr => MemberRow
+    end
+    party_to_wikidata = mems.reject { |m| m.party_wikidata.empty? }.map { |p| [p.party, p.party_wikidata] }.to_h
+    mems.map do |m|
+      mem = m.to_h
+      mem[:party_wikidata] = party_to_wikidata[mem[:party]]
+      mem
     end
   end
 
