@@ -13,20 +13,23 @@ class MembersPage < Scraped::HTML
   decorator WikidataIdsDecorator::Links
 
   field :members do
-    table.xpath('.//tr[td]').map do |tr|
-      mem = fragment(tr => MemberRow).to_h
-      mem.merge(party_wikidata: parties[mem[:party]])
+    member_list.map do |m|
+      mem = m.to_h
+      mem.to_h.merge(party_wikidata: parties[mem[:party]])
     end
   end
 
   field :parties do
-    mems = table.xpath('.//tr[td]').map do |tr|
-      fragment tr => MemberRow
-    end
-    mems.reject { |m| m.party_wikidata.empty? }.map { |p| [p.party, p.party_wikidata] }.to_h
+    member_list.reject { |m| m.party_wikidata.empty? }.map { |p| [p.party, p.party_wikidata] }.to_h
   end
 
   private
+
+  def member_list
+    @member_list ||= table.xpath('.//tr[td]').map do |tr|
+      fragment tr => MemberRow
+    end
+  end
 
   def table
     noko.xpath(".//table[.//th[contains(.,'Member')]]").first
