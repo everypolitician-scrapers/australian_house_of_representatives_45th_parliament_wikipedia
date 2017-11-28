@@ -10,6 +10,8 @@ require 'open-uri/cached'
 OpenURI::Cache.cache_path = '.cache'
 
 class MembersPage < Scraped::HTML
+  decorator WikidataIdsDecorator::Links
+
   field :members do
     table.xpath('.//tr[td]').map do |tr|
       fragment tr => MemberRow
@@ -26,6 +28,10 @@ end
 class MemberRow < Scraped::HTML
   field :name do
     tds[0].text
+  end
+
+  field :wikidata do
+    tds[0].css('a/@wikidata').text
   end
 
   field :party do
@@ -52,4 +58,4 @@ page = MembersPage.new(response: Scraped::Request.new(url: url).response)
 data = page.members.map(&:to_h)
 
 ScraperWiki.sqliteexecute('DROP TABLE data') rescue nil
-ScraperWiki.save_sqlite([:name], data)
+ScraperWiki.save_sqlite([:name, :wikidata], data)
