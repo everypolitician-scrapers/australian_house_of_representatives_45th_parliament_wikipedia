@@ -19,11 +19,12 @@ class MembersPage < Scraped::HTML
     end
   end
 
-  field :parties do
-    member_list.reject { |m| m.party_wikidata.empty? }.map { |p| [p.party, p.party_wikidata] }.to_h
-  end
-
   private
+
+  def parties
+    parties_with_wikidata = member_list.reject { |m| m.party_wikidata.empty? }
+    parties_with_wikidata.map { |p| [p.party, p.party_wikidata] }.to_h
+  end
 
   def member_list
     @member_list ||= table.xpath('.//tr[td]').map do |tr|
