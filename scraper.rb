@@ -45,7 +45,7 @@ class MemberRow < Scraped::HTML
   end
 
   field :wikidata do
-    tds[0].css('a/@wikidata').text
+    tds[0].css('a/@wikidata').first.text
   end
 
   field :party do
