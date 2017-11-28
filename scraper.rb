@@ -39,7 +39,7 @@ end
 
 class MemberRow < Scraped::HTML
   field :name do
-    tds[0].text
+    tds[0].text.tidy
   end
 
   field :wikidata do
