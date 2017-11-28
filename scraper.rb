@@ -15,7 +15,7 @@ class MembersPage < Scraped::HTML
   field :members do
     member_list.map do |m|
       mem = m.to_h
-      mem.to_h.merge(party_wikidata: parties_to_wikidata[mem[:party]])
+      mem.merge(party_wikidata: parties_to_wikidata[mem[:party]])
     end
   end
 
