@@ -28,6 +28,18 @@ class MemberRow < Scraped::HTML
     tds[0].text
   end
 
+  field :party do
+    tds[1].text
+  end
+
+  field :electorate do
+    tds[2].text
+  end
+
+  field :state do
+    tds[3].text
+  end
+
   private
 
   def tds
