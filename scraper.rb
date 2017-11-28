@@ -13,6 +13,12 @@ class MembersPage < Scraped::HTML
   field :members do
     # TODO
   end
+
+  private
+
+  def table
+    noko.xpath(".//table[.//th[contains(.,'Member')]]").first
+  end
 end
 
 url = 'https://en.wikipedia.org/wiki/Members_of_the_Australian_House_of_Representatives,_2016%E2%80%932019'
