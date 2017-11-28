@@ -13,12 +13,24 @@ class MembersPage < Scraped::HTML
   decorator WikidataIdsDecorator::Links
 
   field :members do
-    table.xpath('.//tr[td]').map do |tr|
-      fragment tr => MemberRow
+    member_list.map do |m|
+      mem = m.to_h
+      mem.merge(party_wikidata: parties_to_wikidata[mem[:party]])
     end
   end
 
   private
+
+  def parties_to_wikidata
+    parties_with_wikidata = member_list.reject { |m| m.party_wikidata.empty? }
+    parties_with_wikidata.map { |p| [p.party, p.party_wikidata] }.to_h
+  end
+
+  def member_list
+    @member_list ||= table.xpath('.//tr[td]').map do |tr|
+      fragment tr => MemberRow
+    end
+  end
 
   def table
     noko.xpath(".//table[.//th[contains(.,'Member')]]").first
@@ -37,7 +49,7 @@ class MemberRow < Scraped::HTML
   field :party do
     # First remove footnote link if present
     tds[1].at(:sup)&.remove
-    tds[1].text
+    tds[1].text.tidy
   end
 
   field :party_wikidata do
@@ -65,7 +77,6 @@ end
 
 url = 'https://en.wikipedia.org/wiki/Members_of_the_Australian_House_of_Representatives,_2016%E2%80%932019'
 page = MembersPage.new(response: Scraped::Request.new(url: url).response)
-data = page.members.map(&:to_h)
 
 ScraperWiki.sqliteexecute('DROP TABLE data') rescue nil
-ScraperWiki.save_sqlite([:name, :wikidata], data)
+ScraperWiki.save_sqlite([:name, :wikidata], page.members)
