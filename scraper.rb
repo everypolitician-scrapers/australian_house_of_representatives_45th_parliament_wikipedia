@@ -25,8 +25,13 @@ end
 
 class MemberRow < Scraped::HTML
   field :name do
-    # TODO
-    binding.pry
+    tds[0].text
+  end
+
+  private
+
+  def tds
+    noko.css('td')
   end
 end
 
@@ -35,4 +40,4 @@ page = MembersPage.new(response: Scraped::Request.new(url: url).response)
 data = page.members.map(&:to_h)
 
 ScraperWiki.sqliteexecute('DROP TABLE data') rescue nil
-# ScraperWiki.save_sqlite([:name, :wikidata], data)
+ScraperWiki.save_sqlite([:name], data)
