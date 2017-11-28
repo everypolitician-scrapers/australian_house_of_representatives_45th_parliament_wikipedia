@@ -39,6 +39,8 @@ end
 
 class MemberRow < Scraped::HTML
   field :name do
+    # Remove footnote link if present
+    tds[0].at(:sup)&.remove
     tds[0].text.tidy
   end
 
