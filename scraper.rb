@@ -38,8 +38,16 @@ class MemberRow < Scraped::HTML
     tds[1].text
   end
 
+  field :party_wikidata do
+    tds[1].css('a/@wikidata').text
+  end
+
   field :electorate do
     tds[2].text
+  end
+
+  field :electorate_wikidata do
+    tds[2].css('a/@wikidata').text
   end
 
   field :state do
