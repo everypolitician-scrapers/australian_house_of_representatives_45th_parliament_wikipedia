@@ -11,13 +11,22 @@ OpenURI::Cache.cache_path = '.cache'
 
 class MembersPage < Scraped::HTML
   field :members do
-    # TODO
+    table.xpath('.//tr[td]').map do |tr|
+      fragment tr => MemberRow
+    end
   end
 
   private
 
   def table
     noko.xpath(".//table[.//th[contains(.,'Member')]]").first
+  end
+end
+
+class MemberRow < Scraped::HTML
+  field :name do
+    # TODO
+    binding.pry
   end
 end
 
